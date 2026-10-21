@@ -450,12 +450,13 @@ button:disabled{opacity:.4;pointer-events:none}
   padding:4px 8px 6px;
 }
 
+/* iPhone Xs mockup: 375×812 (19.5:9)、角丸は10.4% */
 .phone{
   position:relative;
-  width:300px;height:652px;
+  width:300px;height:650px;
   background:#000;
   border:6px solid #202023;
-  border-radius:48px;
+  border-radius:31px;
   overflow:hidden;
   box-shadow:0 14px 40px #000,0 0 0 1px #444;
   flex:0 0 auto;
@@ -463,20 +464,21 @@ button:disabled{opacity:.4;pointer-events:none}
 .phone-viewport{
   position:absolute;inset:0;
   overflow:hidden;
-  border-radius:42px;
+  border-radius:25px;
   background:#000;
 }
 .phone-viewport iframe{
   position:absolute;top:50%;left:50%;
-  width:402px;height:874px;border:0;background:#000;color-scheme:dark;
+  width:375px;height:812px;border:0;background:#000;color-scheme:dark;
   transform-origin:center center;
-  margin-left:-201px;margin-top:-437px;
+  margin-left:-187.5px;margin-top:-406px;
 }
-.island{
-  position:absolute;z-index:5;top:11px;left:50%;transform:translateX(-50%);
-  width:33.5%;
-  height:34px;
-  background:#000;border-radius:100px;pointer-events:none;
+/* iPhone Xs ノッチ（画面上端に接して下方向へ切り込む） */
+.notch{
+  position:absolute;z-index:5;top:0;left:50%;transform:translateX(-50%);
+  width:50%;
+  height:30px;
+  background:#000;border-radius:0 0 20px 20px;pointer-events:none;
 }
 .homebar{
   position:absolute;z-index:6;bottom:8px;left:50%;transform:translateX(-50%);
@@ -730,9 +732,9 @@ textarea:focus{border-color:var(--accent)}
 
     <div class="stage" id="stage">
       <div class="phone" id="phone">
-        <div class="island"></div>
+        <div class="notch"></div>
         <div class="phone-viewport">
-          <iframe id="framePhone" title="iPhone preview"
+          <iframe id="framePhone" title="iPhone Xs preview"
             sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads allow-same-origin"></iframe>
         </div>
         <div class="homebar"></div>
@@ -873,7 +875,8 @@ textarea:focus{border-color:var(--accent)}
 
   const APP_NS_PREFIX = "__app:";
 
-  const PHONE_W = 402, PHONE_H = 874, PHONE_B = 6;
+  /* iPhone Xs: 375×812 (19.5:9) */
+  const PHONE_W = 375, PHONE_H = 812, PHONE_B = 6;
   const IPAD_W  = 1366, IPAD_H  = 1024, IPAD_B  = 12;
 
   const SB_BACK_DX          = 45;
@@ -1267,16 +1270,19 @@ textarea:focus{border-color:var(--accent)}
       phone.style.borderWidth = bw + "px";
       phone.style.width  = w.toFixed(2) + "px";
       phone.style.height = h.toFixed(2) + "px";
-      const rad = Math.max(16, w * 0.135);
+      /* iPhone Xs の角丸比率（39pt / 375pt ≒ 10.4%） */
+      const rad = Math.max(16, w * 0.104);
       phone.style.borderRadius = rad.toFixed(1) + "px";
       const vp = phone.querySelector(".phone-viewport");
       vp.style.borderRadius = Math.max(0, rad - bw - 1).toFixed(1) + "px";
 
-      const island = phone.querySelector(".island");
-      if(island){
-        island.style.height = Math.max(10, 34 * k).toFixed(2) + "px";
-        island.style.top    = Math.max(3, 11 * k).toFixed(2) + "px";
-        island.style.borderRadius = Math.max(6, 100 * k).toFixed(1) + "px";
+      /* iPhone Xs ノッチ（上端に接し、下方向へ角丸で切り込む） */
+      const notch = phone.querySelector(".notch");
+      if(notch){
+        const nh = Math.max(8, 30 * k);
+        const nr = Math.max(4, 20 * k);
+        notch.style.height = nh.toFixed(2) + "px";
+        notch.style.borderRadius = `0 0 ${nr.toFixed(1)}px ${nr.toFixed(1)}px`;
       }
       const homebar = phone.querySelector(".homebar");
       if(homebar){
@@ -1402,7 +1408,7 @@ textarea:focus{border-color:var(--accent)}
     frameIpad.srcdoc = html;
     updateMemoIndicator();
     requestAnimationFrame(resizeAllPreviews);
-    checkIframeRender(framePhone, "iPhone");
+    checkIframeRender(framePhone, "iPhone Xs");
     checkIframeRender(frameIpad, "iPad");
   }
 
