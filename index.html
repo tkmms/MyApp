@@ -473,12 +473,23 @@ button:disabled{opacity:.4;pointer-events:none}
   transform-origin:center center;
   margin-left:-187.5px;margin-top:-406px;
 }
-/* iPhone Xs ノッチ（画面上端に接して下方向へ切り込む） */
+/* iPhone Xs ノッチ（画面上端に接して下方向へ切り込む）
+   ※iOS Safariのタッチ領域誤計算を回避するため transform を使わず left で中央配置 */
 .notch{
-  position:absolute;z-index:5;top:0;left:50%;transform:translateX(-50%);
+  position:absolute;
+  z-index:5;
+  top:0;
+  left:25%;
   width:50%;
   height:30px;
-  background:#000;border-radius:0 0 20px 20px;pointer-events:none;
+  background:#000;
+  border-radius:0 0 20px 20px;
+  pointer-events:none;
+  -webkit-pointer-events:none;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+  touch-action:none;
 }
 .homebar{
   position:absolute;z-index:6;bottom:8px;left:50%;transform:translateX(-50%);
@@ -732,7 +743,7 @@ textarea:focus{border-color:var(--accent)}
 
     <div class="stage" id="stage">
       <div class="phone" id="phone">
-        <div class="notch"></div>
+        <div class="notch" aria-hidden="true"></div>
         <div class="phone-viewport">
           <iframe id="framePhone" title="iPhone Xs preview"
             sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads allow-same-origin"></iframe>
@@ -1276,7 +1287,8 @@ textarea:focus{border-color:var(--accent)}
       const vp = phone.querySelector(".phone-viewport");
       vp.style.borderRadius = Math.max(0, rad - bw - 1).toFixed(1) + "px";
 
-      /* iPhone Xs ノッチ（上端に接し、下方向へ角丸で切り込む） */
+      /* iPhone Xs ノッチ（上端に接し、下方向へ角丸で切り込む）
+         left:25% / width:50% で中央配置（transform不使用） */
       const notch = phone.querySelector(".notch");
       if(notch){
         const nh = Math.max(8, 30 * k);
